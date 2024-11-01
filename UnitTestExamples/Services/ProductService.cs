@@ -17,14 +17,14 @@ public class ProductService : IProductService
 
     public Product GetProduct(int productId)
     {
-		try
-		{
+        try
+        {
             var product = _databaseRepository.GetProduct(productId) ?? throw new Exception("Product cannot be found");
 
             return product;
         }
-		catch (Exception ex)
-		{
+        catch (Exception ex)
+        {
             _logger.LogError(ex.Message);
             throw;
         }
