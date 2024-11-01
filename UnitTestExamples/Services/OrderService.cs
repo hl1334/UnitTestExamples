@@ -6,11 +6,15 @@ namespace UnitTestExamples.Services;
 
 public class OrderService : IOrderService
 {
+    private const decimal vatFactor1 = 1.25m;
+    private const decimal vatFactor2 = 1.12m;
     private readonly IDatabaseRepository _databaseRepository;
+    private readonly IProductService _productService;
 
-    public OrderService(IDatabaseRepository databaseRepository)
+    public OrderService(IDatabaseRepository databaseRepository, IProductService productService)
     {
         _databaseRepository = databaseRepository;
+        _productService = productService;
     }
 
     public Order CreateOrder(int customerId, OrderDto order)
@@ -38,12 +42,37 @@ public class OrderService : IOrderService
         }
     }
 
-    private static List<OrderLine> MapOrderLines(List<OrderLineDto> orderLines)
+    private List<OrderLine> MapOrderLines(List<OrderLineDto> orderLines)
     {
         return orderLines.Select(line => new OrderLine
         {
             ProductId = line.ProductId,
-            Quantity = line.Quantity
+            Quantity = line.Quantity,
+            Prices = CalcPrices(line.ProductId, line.Quantity)
         }).ToList();
+    }
+
+    private OrderLinePrices CalcPrices(int productId, int quantity)
+    {
+        var product = _productService.GetProduct(productId);
+
+        var totalNetPrice = product.NetPrice * quantity;
+
+        decimal totalPriceWithVat;
+
+        // TODO: For edgecase testing.
+        if (totalNetPrice > 1000.00m)
+        {
+            totalPriceWithVat = totalNetPrice * vatFactor1;
+        } else
+        {
+            totalPriceWithVat = totalNetPrice * vatFactor2;
+        }
+
+        return new OrderLinePrices
+        {
+            TotalNetPrice = totalNetPrice,
+            TotalPriceWithVat = totalPriceWithVat
+        };
     }
 }
