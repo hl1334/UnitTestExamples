@@ -5,5 +5,6 @@ namespace UnitTestExamples.Interfaces;
 
 public interface IOrderService
 {
-    Order CreateOrder(int customerId, OrderDto order);
+    Order CreateOrder(OrderDto order);
+    OrderLinePrices CalcPrices(int productId, int quantity);
 }

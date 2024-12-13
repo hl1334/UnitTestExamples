@@ -1,4 +1,5 @@
-﻿using UnitTestExamples.Dtos;
+﻿using Microsoft.Extensions.Logging;
+using UnitTestExamples.Dtos;
 using UnitTestExamples.Interfaces;
 using UnitTestExamples.Models;
 
@@ -6,18 +7,22 @@ namespace UnitTestExamples.Services;
 
 public class OrderService : IOrderService
 {
-    private const decimal vatFactor1 = 1.25m;
-    private const decimal vatFactor2 = 1.12m;
+    private const decimal VatFactor1 = 1.25m;
+    private const decimal VatFactor2 = 1.12m;
+    private const decimal NetPriceThreshold = 1000.00m;
+
     private readonly IDatabaseRepository _databaseRepository;
     private readonly IProductService _productService;
+    private readonly ILogger<OrderService> _logger;
 
-    public OrderService(IDatabaseRepository databaseRepository, IProductService productService)
+    public OrderService(IDatabaseRepository databaseRepository, IProductService productService, ILogger<OrderService> logger)
     {
         _databaseRepository = databaseRepository;
         _productService = productService;
+        _logger = logger;
     }
 
-    public Order CreateOrder(int customerId, OrderDto order)
+    public Order CreateOrder(OrderDto order)
     {
         try
         {
@@ -35,9 +40,9 @@ public class OrderService : IOrderService
 
             return createdOrder;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Should probably log the exception here.
+            _logger.LogError(ex.Message);
             throw;
         }
     }
@@ -52,7 +57,7 @@ public class OrderService : IOrderService
         }).ToList();
     }
 
-    private OrderLinePrices CalcPrices(int productId, int quantity)
+    public OrderLinePrices CalcPrices(int productId, int quantity)
     {
         var product = _productService.GetProduct(productId);
 
@@ -61,12 +66,12 @@ public class OrderService : IOrderService
         decimal totalPriceWithVat;
 
         // TODO: For edgecase testing.
-        if (totalNetPrice > 1000.00m)
+        if (totalNetPrice > NetPriceThreshold)
         {
-            totalPriceWithVat = totalNetPrice * vatFactor1;
+            totalPriceWithVat = totalNetPrice * VatFactor1;
         } else
         {
-            totalPriceWithVat = totalNetPrice * vatFactor2;
+            totalPriceWithVat = totalNetPrice * VatFactor2;
         }
 
         return new OrderLinePrices
