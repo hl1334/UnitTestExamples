@@ -18,7 +18,7 @@ public class OrderServiceTests
         _repository = Substitute.For<IDatabaseRepository>();
         _productService = Substitute.For<IProductService>();
         _logger = Substitute.For<ILogger<OrderService>>();
-        _productService.GetProduct(1).Returns(new Product
+        _productService.GetProduct(Arg.Is(1)).Returns(new Product
         {
             Sku = "12345",
             Name = "Test Product 1",
@@ -26,7 +26,7 @@ public class OrderServiceTests
             Id = 1,
             NetPrice = 100.00m
         });
-        _productService.GetProduct(2).Returns(new Product
+        _productService.GetProduct(Arg.Is(2)).Returns(new Product
         {
             Sku = "54321",
             Name = "Test Product 2",

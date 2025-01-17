@@ -8,7 +8,7 @@ public class CustomerMapperTests
     private CustomerMapper _uut = new();
 
     [Fact]
-    public void CustomerMapperReturnsCorrectCustomerData()
+    public void CustomerMapperReturnsCorrectAggregateCustomerData()
     {
         // Arrange
         Customer customer = new()
@@ -34,8 +34,15 @@ public class CustomerMapperTests
 
         // Assert
         Assert.NotNull(result);
+        Assert.Equal(1, result.Id);
         Assert.Equal("Hans Testsen", result.Name);
+        Assert.Equal("Test City", result.City);
         Assert.Equal("Test Road 1", result.Street);
+        Assert.Equal("Z1234", result.PostalCode);
+        Assert.Equal("DK", result.Country);
+        Assert.Equal("test@testmail.com", result.Email);
+        Assert.Equal("12233445", result.Phone);
+        Assert.Equal("Jutland", result.Region);
     }
 
     [Fact]

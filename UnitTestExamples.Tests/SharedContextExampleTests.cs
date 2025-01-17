@@ -51,4 +51,16 @@ public class SharedContextExampleTests
         Assert.NotNull(result);
         Assert.Equal("Test Road 1", result.Street);
     }
+
+    [Fact]
+    public void CustomerMapperReturnsCorrectData()
+    {
+        // Act
+        var result = _uut.Map(_customer, _address);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Hans Testsen", result.Name);
+        Assert.Equal("Test Road 1", result.Street);
+    }
 }

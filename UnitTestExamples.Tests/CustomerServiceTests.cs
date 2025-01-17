@@ -74,7 +74,7 @@ public class CustomerServiceTests
 
         _uut = new CustomerService(repository, customerMapper, logger);
 
-        // Assert
+        // Act and Assert
         var exceptionThrown = Assert.Throws<Exception>(() => _uut.GetCustomer(1));
         Assert.Equal("Customer cannot be found", exceptionThrown.Message);
     }
@@ -98,7 +98,7 @@ public class CustomerServiceTests
 
         _uut = new CustomerService(repository, customerMapper, logger);
 
-        // Assert
+        // Act and Assert
         var exceptionThrown = Assert.Throws<Exception>(() => _uut.GetCustomer(1));
         Assert.Equal("Address cannot be found", exceptionThrown.Message);
     }
